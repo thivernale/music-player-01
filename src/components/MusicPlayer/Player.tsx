@@ -1,5 +1,5 @@
 import { ReactEventHandler, useEffect, useRef } from 'react';
-import { ShazamSongAttributes } from '../../types/apiTypes';
+import { ShazamSongAttributes } from '../../types/shazamSongsListSimilarities';
 
 interface Props {
   activeSong?: ShazamSongAttributes;

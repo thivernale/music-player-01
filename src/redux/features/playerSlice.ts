@@ -1,5 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ShazamSong, ShazamSongAttributes } from '../../types/apiTypes';
+import {
+  ShazamSong,
+  ShazamSongAttributes,
+} from '../../types/shazamSongsListSimilarities';
 
 const initialState = {
   currentSongs: [] as ShazamSong[],

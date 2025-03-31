@@ -6,7 +6,7 @@ import {
   BsShuffle,
 } from 'react-icons/bs';
 import * as React from 'react';
-import { ShazamSong } from '../../types/apiTypes';
+import { ShazamSong } from '../../types/shazamSongsListSimilarities';
 
 interface Props {
   isPlaying?: boolean;

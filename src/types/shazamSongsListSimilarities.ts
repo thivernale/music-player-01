@@ -1,13 +1,13 @@
 // To parse this data:
 //
-//   import { Convert, APITypes } from "./file";
+//   import { Convert, ShazamSongsListSimilarities } from "./file";
 //
-//   const aPITypes = Convert.toAPITypes(json);
+//   const shazamSongsListSimilarities = Convert.toShazamSongsListSimilarities(json);
 //
 // These functions will throw an error if the JSON doesn't
 // match the expected interface, even if the JSON is valid.
 
-export interface APITypes {
+export interface ShazamSongsListSimilarities {
   data: Datum[];
   resources: Resources;
 }
@@ -75,12 +75,8 @@ export interface LyricAttributes {
   text: string[];
   footer: string;
   musixmatchLyricsId: string;
-  providerName: ProviderName;
+  providerName: string;
   syncAvailable: boolean;
-}
-
-export enum ProviderName {
-  Musixmatch = 'musixmatch',
 }
 
 export interface ShazamArtists {
@@ -206,12 +202,20 @@ export enum Namespace {
 // Converts JSON strings to/from your types
 // and asserts the results of JSON.parse at runtime
 export class Convert {
-  public static toAPITypes(json: string): APITypes {
-    return cast(JSON.parse(json), r('APITypes'));
+  public static toShazamSongsListSimilarities(
+    json: string,
+  ): ShazamSongsListSimilarities {
+    return cast(JSON.parse(json), r('ShazamSongsListSimilarities'));
   }
 
-  public static aPITypesToJson(value: APITypes): string {
-    return JSON.stringify(uncast(value, r('APITypes')), null, 2);
+  public static shazamSongsListSimilaritiesToJson(
+    value: ShazamSongsListSimilarities,
+  ): string {
+    return JSON.stringify(
+      uncast(value, r('ShazamSongsListSimilarities')),
+      null,
+      2,
+    );
   }
 }
 
@@ -396,7 +400,7 @@ function r(name: string) {
 }
 
 const typeMap: any = {
-  APITypes: o(
+  ShazamSongsListSimilarities: o(
     [
       { json: 'data', js: 'data', typ: a(r('Datum')) },
       { json: 'resources', js: 'resources', typ: r('Resources') },
