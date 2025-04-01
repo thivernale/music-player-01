@@ -5,9 +5,9 @@ import { useAppSelector } from '../redux/hooks';
 
 const Discover = () => {
   const genreTitle = 'Pop';
-  const seedSongId = '811314261';
-  const adamid = '425470694';
+  // const seedSongId = '811314261';
   //const { data, isFetching, error } = useGetTrackSimilaritiesQuery(seedSongId);
+  const adamid = '425470694';
   const { data, isFetching, error } = useGetArtistTopSongsQuery(adamid);
   const { activeSong, isPlaying } = useAppSelector(({ player }) => player);
 

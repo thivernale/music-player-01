@@ -65,6 +65,7 @@ export const shazamApi = createApi({
                       /\{[wh]\}/g,
                       '400',
                     ),
+                    artistAvatar: '',
                   } as Images,
                   share: {} as Share,
                   streaming: {

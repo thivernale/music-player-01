@@ -33,7 +33,10 @@ const SongCard = ({ song, i, activeSong, isPlaying, data }: Props) => {
             handlePause={handlePlayPause}
           />
         </div>
-        <img src={song.attributes.images?.coverArt} alt="song_img" />
+        <img
+          src={song.attributes.images?.coverArt}
+          alt={song.attributes.title}
+        />
       </div>
       <div className="mt-4 flex flex-col">
         <p className="truncate text-lg font-semibold text-white">
