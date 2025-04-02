@@ -1,9 +1,10 @@
 import { Resources } from '../types/shazamSongsGetDetails';
 import { Link } from 'react-router-dom';
+import { ArtistAttributes } from '../types/artistsGetDetails';
 
 interface DetailsHeaderProps {
   artistId?: string;
-  artistData?: null;
+  artistData?: ArtistAttributes;
   songId?: string;
   songData?: Resources;
 }
@@ -22,13 +23,17 @@ const DetailsHeader = ({
       <div className="h-28 w-full bg-gradient-to-l from-transparent to-black sm:h-48"></div>
       <div className="absolute inset-0 flex items-center">
         <img
-          src={artistId ? 'TODO' : songAttributes?.images.coverArt}
+          src={
+            artistId
+              ? artistData?.artwork.url.replace(/\{[wh]\}/g, '400')
+              : songAttributes?.images.coverArt
+          }
           alt="art"
           className="h-28 w-28 rounded-full border-2 object-cover shadow-xl shadow-black sm:h-48 sm:w-48"
         />
         <div className="pl-5">
           <p className="text-xl font-bold text-white sm:text-3xl">
-            {artistId ? 'TODO' : songAttributes?.title}
+            {artistId ? artistData?.name : songAttributes?.title}
           </p>
           {songData?.artists && (
             <Link to={`/artists/${Object.keys(songData.artists).pop()}`}>
@@ -38,7 +43,9 @@ const DetailsHeader = ({
             </Link>
           )}
           <p className="mt-2 text-base text-gray-400">
-            {artistId ? 'TODO' : songAttributes?.genres.primary}
+            {artistId
+              ? artistData?.genreNames.join(', ')
+              : songAttributes?.genres.primary}
           </p>
         </div>
       </div>

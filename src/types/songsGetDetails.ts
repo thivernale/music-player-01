@@ -14,12 +14,12 @@ export interface SongsGetDetails {
 export interface SongsGetDetailsDatum {
   id: string;
   type: string;
-  attributes: Attributes;
+  attributes: SongAttributes;
   relationships: Relationships;
   meta: Meta;
 }
 
-export interface Attributes {
+export interface SongAttributes {
   hasTimeSyncedLyrics: boolean;
   albumName: string;
   genreNames: string[];

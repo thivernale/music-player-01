@@ -1,45 +1,28 @@
 // To parse this data:
 //
-//   import { Convert, ArtistsTopSongs } from "./file";
+//   import { Convert, ArtistsGetDetails } from "./file";
 //
-//   const artistsTopSongs = Convert.toArtistsTopSongs(json);
+//   const artistsGetDetails = Convert.toArtistsGetDetails(json);
 //
 // These functions will throw an error if the JSON doesn't
 // match the expected interface, even if the JSON is valid.
 
-export interface ArtistsTopSongs {
-  data: ArtistSong[];
+export interface ArtistsGetDetails {
+  data: ArtistsGetDetailsDatum[];
 }
 
-export interface ArtistSong {
+export interface ArtistsGetDetailsDatum {
   id: string;
-  type: Type;
-  attributes: ArtistSongAttributes;
-  meta: Meta;
+  type: string;
+  attributes: ArtistAttributes;
+  relationships: Relationships;
 }
 
-export interface ArtistSongAttributes {
-  hasTimeSyncedLyrics: boolean;
-  albumName: string;
-  genreNames: GenreName[];
-  trackNumber: number;
-  releaseDate: Date;
-  durationInMillis: number;
-  isVocalAttenuationAllowed: boolean;
-  isMasteredForItunes: boolean;
-  isrc: string;
-  artwork: Artwork;
-  composerName: string;
-  audioLocale: string;
-  url: string;
-  playParams: PlayParams;
-  discNumber: number;
-  hasLyrics: boolean;
-  isAppleDigitalMaster: boolean;
-  audioTraits: AudioTrait[];
+export interface ArtistAttributes {
+  genreNames: string[];
   name: string;
-  previews: Preview[];
-  artistName: string;
+  artwork: Artwork;
+  url: string;
 }
 
 export interface Artwork {
@@ -54,53 +37,32 @@ export interface Artwork {
   hasP3: boolean;
 }
 
-export enum AudioTrait {
-  HiResLossless = 'hi-res-lossless',
-  Lossless = 'lossless',
-  LossyStereo = 'lossy-stereo',
+export interface Relationships {
+  albums: Albums;
 }
 
-export enum GenreName {
-  Metal = 'Metal',
-  Music = 'Music',
-  Rock = 'Rock',
+export interface Albums {
+  data: AlbumsDatum[];
 }
 
-export interface PlayParams {
+export interface AlbumsDatum {
   id: string;
-  kind: Kind;
-}
-
-export enum Kind {
-  Song = 'song',
-}
-
-export interface Preview {
-  url: string;
-}
-
-export interface Meta {
-  contentVersion: ContentVersion;
-}
-
-export interface ContentVersion {
-  RTCI: number;
-  MZ_INDEXER: number;
+  type: Type;
 }
 
 export enum Type {
-  Songs = 'songs',
+  Albums = 'albums',
 }
 
 // Converts JSON strings to/from your types
 // and asserts the results of JSON.parse at runtime
 export class Convert {
-  public static tArtistsTopSongs(json: string): ArtistsTopSongs {
-    return cast(JSON.parse(json), r('ArtistsTopSongs'));
+  public static toArtistsGetDetails(json: string): ArtistsGetDetails {
+    return cast(JSON.parse(json), r('ArtistsGetDetails'));
   }
 
-  public static artistsTopSongsToJson(value: ArtistsTopSongs): string {
-    return JSON.stringify(uncast(value, r('ArtistsTopSongs')), null, 2);
+  public static artistsGetDetailsToJson(value: ArtistsGetDetails): string {
+    return JSON.stringify(uncast(value, r('ArtistsGetDetails')), null, 2);
   }
 }
 
@@ -285,43 +247,25 @@ function r(name: string) {
 }
 
 const typeMap: any = {
-  ArtistsTopSongs: o([{ json: 'data', js: 'data', typ: a(r('Datum')) }], false),
-  Datum: o(
+  ArtistsGetDetails: o(
+    [{ json: 'data', js: 'data', typ: a(r('ArtistsGetDetailsDatum')) }],
+    false,
+  ),
+  ArtistsGetDetailsDatum: o(
     [
       { json: 'id', js: 'id', typ: '' },
-      { json: 'type', js: 'type', typ: r('Type') },
+      { json: 'type', js: 'type', typ: '' },
       { json: 'attributes', js: 'attributes', typ: r('Attributes') },
-      { json: 'meta', js: 'meta', typ: r('Meta') },
+      { json: 'relationships', js: 'relationships', typ: r('Relationships') },
     ],
     false,
   ),
   Attributes: o(
     [
-      { json: 'hasTimeSyncedLyrics', js: 'hasTimeSyncedLyrics', typ: true },
-      { json: 'albumName', js: 'albumName', typ: r('AlbumName') },
-      { json: 'genreNames', js: 'genreNames', typ: a(r('GenreName')) },
-      { json: 'trackNumber', js: 'trackNumber', typ: 0 },
-      { json: 'releaseDate', js: 'releaseDate', typ: Date },
-      { json: 'durationInMillis', js: 'durationInMillis', typ: 0 },
-      {
-        json: 'isVocalAttenuationAllowed',
-        js: 'isVocalAttenuationAllowed',
-        typ: true,
-      },
-      { json: 'isMasteredForItunes', js: 'isMasteredForItunes', typ: true },
-      { json: 'isrc', js: 'isrc', typ: '' },
-      { json: 'artwork', js: 'artwork', typ: r('Artwork') },
-      { json: 'composerName', js: 'composerName', typ: '' },
-      { json: 'audioLocale', js: 'audioLocale', typ: r('AudioLocale') },
-      { json: 'url', js: 'url', typ: '' },
-      { json: 'playParams', js: 'playParams', typ: r('PlayParams') },
-      { json: 'discNumber', js: 'discNumber', typ: 0 },
-      { json: 'hasLyrics', js: 'hasLyrics', typ: true },
-      { json: 'isAppleDigitalMaster', js: 'isAppleDigitalMaster', typ: true },
-      { json: 'audioTraits', js: 'audioTraits', typ: a(r('AudioTrait')) },
+      { json: 'genreNames', js: 'genreNames', typ: a('') },
       { json: 'name', js: 'name', typ: '' },
-      { json: 'previews', js: 'previews', typ: a(r('Preview')) },
-      { json: 'artistName', js: 'artistName', typ: r('ArtistName') },
+      { json: 'artwork', js: 'artwork', typ: r('Artwork') },
+      { json: 'url', js: 'url', typ: '' },
     ],
     false,
   ),
@@ -330,49 +274,23 @@ const typeMap: any = {
       { json: 'width', js: 'width', typ: 0 },
       { json: 'url', js: 'url', typ: '' },
       { json: 'height', js: 'height', typ: 0 },
-      { json: 'textColor3', js: 'textColor3', typ: r('TextColor3') },
-      { json: 'textColor2', js: 'textColor2', typ: r('TextColor2') },
-      { json: 'textColor4', js: 'textColor4', typ: r('TextColor4') },
-      { json: 'textColor1', js: 'textColor1', typ: r('TextColor1') },
+      { json: 'textColor3', js: 'textColor3', typ: '' },
+      { json: 'textColor2', js: 'textColor2', typ: '' },
+      { json: 'textColor4', js: 'textColor4', typ: '' },
+      { json: 'textColor1', js: 'textColor1', typ: '' },
       { json: 'bgColor', js: 'bgColor', typ: '' },
       { json: 'hasP3', js: 'hasP3', typ: true },
     ],
     false,
   ),
-  PlayParams: o(
+  Relationships: o([{ json: 'albums', js: 'albums', typ: r('Albums') }], false),
+  Albums: o([{ json: 'data', js: 'data', typ: a(r('AlbumsDatum')) }], false),
+  AlbumsDatum: o(
     [
       { json: 'id', js: 'id', typ: '' },
-      { json: 'kind', js: 'kind', typ: r('Kind') },
+      { json: 'type', js: 'type', typ: r('Type') },
     ],
     false,
   ),
-  Preview: o([{ json: 'url', js: 'url', typ: '' }], false),
-  Meta: o(
-    [
-      {
-        json: 'contentVersion',
-        js: 'contentVersion',
-        typ: r('ContentVersion'),
-      },
-    ],
-    false,
-  ),
-  ContentVersion: o(
-    [
-      { json: 'RTCI', js: 'RTCI', typ: 0 },
-      { json: 'MZ_INDEXER', js: 'MZ_INDEXER', typ: 0 },
-    ],
-    false,
-  ),
-  AlbumName: ['Lonely People With Power'],
-  ArtistName: ['Deafheaven'],
-  TextColor1: ['f0d8c2'],
-  TextColor2: ['f8d3bc'],
-  TextColor3: ['c5b09e'],
-  TextColor4: ['cbac9a'],
-  AudioLocale: ['en-US'],
-  AudioTrait: ['hi-res-lossless', 'lossless', 'lossy-stereo'],
-  GenreName: ['Metal', 'Music', 'Rock'],
-  Kind: ['song'],
-  Type: ['songs'],
+  Type: ['albums'],
 };
