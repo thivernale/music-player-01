@@ -1,14 +1,15 @@
 import { Error, Loader, SongCard } from '../components';
 import { genres } from '../assets/constants';
-import { useGetArtistTopSongsQuery } from '../redux/services/shazamApi';
 import { useAppSelector } from '../redux/hooks';
+import { useGetTrackSimilaritiesQuery } from '../redux/services/shazamApi';
 
 const Discover = () => {
   const genreTitle = 'Pop';
-  // const seedSongId = '811314261';
-  //const { data, isFetching, error } = useGetTrackSimilaritiesQuery(seedSongId);
-  const adamid = '425470694';
-  const { data, isFetching, error } = useGetArtistTopSongsQuery(adamid);
+  const seedShazamSongId = '811314261'; //1792077176
+  const { data, isFetching, error } =
+    useGetTrackSimilaritiesQuery(seedShazamSongId);
+  // const adamid = '425470694';
+  // const { data, isFetching, error } = useGetArtistTopSongsQuery(adamid);
   const { activeSong, isPlaying } = useAppSelector(({ player }) => player);
 
   if (isFetching) return <Loader title={'Loading songs...'} />;

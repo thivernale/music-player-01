@@ -12,6 +12,12 @@ import {
   Streaming,
 } from '../../types/shazamSongsListSimilarities';
 import { ArtistsTopSongs } from '../../types/artistsTopSongs';
+import { Search } from '../../types/search';
+import {
+  Resources,
+  ShazamSongsGetDetails,
+} from '../../types/shazamSongsGetDetails';
+import { Attributes, SongsGetDetails } from '../../types/songsGetDetails';
 
 export const shazamApi = createApi({
   reducerPath: 'shazamApi',
@@ -26,29 +32,47 @@ export const shazamApi = createApi({
     },
   }),
   endpoints: (builder) => ({
+    search: builder.query<Search, string>({
+      query: (term) => ({
+        url: '/search',
+        params: { term, offset: 0, limit: 5 },
+      }),
+    }),
+    getTrackDetails: builder.query<Resources, string>({
+      query: (id) => ({
+        url: '/shazam-songs/get-details',
+        params: { id },
+      }),
+      transformResponse: (response: ShazamSongsGetDetails) =>
+        response.resources || {},
+    }),
     getTrackSimilarities: builder.query<ShazamSong[], string>({
       query: (id) => ({
         url: '/shazam-songs/list-similarities',
-        params: {
-          id: `track-similarities-id-${id}`,
-        },
+        params: { id: `track-similarities-id-${id}` },
       }),
       transformResponse: (response: ShazamSongsListSimilarities) =>
         Object.values(response.resources['shazam-songs']),
     }),
+    getSongDetails: builder.query<Attributes, string>({
+      query: (id) => ({
+        url: '/songs/v2/get-details',
+        params: { id },
+      }),
+      transformResponse: (response: SongsGetDetails) =>
+        response.data[0].attributes || {},
+    }),
     getArtistTopSongs: builder.query<ShazamSong[], string>({
       query: (id) => ({
         url: '/artists/get-top-songs',
-        params: {
-          id,
-        },
+        params: { id },
       }),
-      transformResponse: (response: ArtistsTopSongs) =>
+      transformResponse: (response: ArtistsTopSongs, meta, arg) =>
         Object.values(
           response.data.map(
             (d) =>
               ({
-                id: d.id,
+                id: d.id + 'not-shazam-song-id',
                 type: DatumType.ShazamSongs,
                 attributes: {
                   ...d.attributes,
@@ -74,14 +98,8 @@ export const shazamApi = createApi({
                   classicalAvailability: false,
                 } as ShazamSongAttributes,
                 relationships: {
-                  artists: {
-                    data: [
-                      {
-                        id: d.id,
-                        type: DatumType.Artists,
-                      },
-                    ],
-                  },
+                  artists: { data: [{ id: arg, type: DatumType.Artists }] },
+                  songs: { data: [{ id: d.id, type: DatumType.Songs }] },
                 } as unknown as ShazamSongRelationships,
               }) as ShazamSong,
           ),
@@ -90,5 +108,9 @@ export const shazamApi = createApi({
   }),
 });
 
-export const { useGetTrackSimilaritiesQuery, useGetArtistTopSongsQuery } =
-  shazamApi;
+export const {
+  useGetTrackDetailsQuery,
+  useGetTrackSimilaritiesQuery,
+  useGetArtistTopSongsQuery,
+  useGetSongDetailsQuery,
+} = shazamApi;

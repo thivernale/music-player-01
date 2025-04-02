@@ -62,7 +62,7 @@ const MusicPlayer = () => {
       <Track
         isPlaying={isPlaying}
         isActive={isActive}
-        activeSong={activeSong.attributes}
+        activeSong={activeSong}
       />
       <div className="flex flex-1 flex-col items-center justify-center">
         <Controls

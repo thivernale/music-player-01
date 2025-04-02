@@ -1,77 +1,79 @@
 // To parse this data:
 //
-//   import { Convert, ShazamSongsListSimilarities } from "./file";
+//   import { Convert, ShazamSongsGetDetails } from "./file";
 //
-//   const shazamSongsListSimilarities = Convert.toShazamSongsListSimilarities(json);
+//   const shazamSongsGetDetails = Convert.toShazamSongsGetDetails(json);
 //
 // These functions will throw an error if the JSON doesn't
 // match the expected interface, even if the JSON is valid.
 
-export interface ShazamSongsListSimilarities {
+export interface ShazamSongsGetDetails {
   data: Datum[];
   resources: Resources;
 }
 
 export interface Datum {
   id: string;
-  type: DatumType;
-}
-
-export enum DatumType {
-  Albums = 'albums',
-  ArtistHighlights = 'artist-highlights',
-  Artists = 'artists',
-  Lyrics = 'lyrics',
-  RelatedTracks = 'related-tracks',
-  ShazamArtists = 'shazam-artists',
-  ShazamSongLists = 'shazam-song-lists',
-  ShazamSongs = 'shazam-songs',
-  Songs = 'songs',
-  TrackHighlights = 'track-highlights',
+  type: string;
 }
 
 export interface Resources {
-  'shazam-song-lists': ShazamSongLists;
-  'track-highlights': { [key: string]: Datum };
-  songs: { [key: string]: Song };
+  'artist-highlights': ArtistHighlights;
+  'track-highlights': TrackHighlights;
+  'related-tracks': RelatedTracks;
+  songs: Songs;
+  albums: ResourcesAlbums;
   'shazam-artists': ShazamArtists;
-  'artist-highlights': { [key: string]: Datum };
-  lyrics: { [key: string]: Lyric };
-  'related-tracks': { [key: string]: Datum };
-  albums: { [key: string]: Album };
-  artists: { [key: string]: Artist };
-  'shazam-songs': { [key: string]: ShazamSong };
+  artists: Artists;
+  lyrics: Lyrics;
+  'shazam-songs': ShazamSongs;
 }
 
-export interface Album {
+export interface ResourcesAlbums {
+  [p: string]: ResourcesAlbum;
+}
+
+export interface ResourcesAlbum {
   id: string;
-  type: DatumType;
-  attributes: AlbumAttributes;
+  type: string;
+  attributes: ResourcesAlbum_Attributes;
 }
 
-export interface AlbumAttributes {
+export interface ResourcesAlbum_Attributes {
   artistName: string;
   name: string;
   releaseDate: string;
 }
 
-export interface Artist {
-  id: string;
-  attributes: ArtistAttributes;
-  type: DatumType;
+export interface ArtistHighlights {
+  [p: string]: Datum;
 }
 
-export interface ArtistAttributes {
+export interface Artists {
+  [p: string]: Artist;
+}
+
+export interface Artist {
+  id: string;
+  attributes: Artist_Attributes;
+  type: string;
+}
+
+export interface Artist_Attributes {
   name: string;
+}
+
+export interface Lyrics {
+  [p: string]: Lyric;
 }
 
 export interface Lyric {
   id: string;
-  type: DatumType;
-  attributes: LyricAttributes;
+  type: string;
+  attributes: Lyric_Attributes;
 }
 
-export interface LyricAttributes {
+export interface Lyric_Attributes {
   text: string[];
   footer: string;
   musixmatchLyricsId: string;
@@ -79,38 +81,28 @@ export interface LyricAttributes {
   syncAvailable: boolean;
 }
 
+export interface RelatedTracks {
+  //'track-similarities-id-811314261': Datum;
+  [p: string]: Datum;
+}
+
 export interface ShazamArtists {
-  '42': Datum;
+  [p: string]: Datum;
 }
 
-export interface ShazamSongLists {
-  //'track-similarities-id-811314261': TrackSimilarities;
-  [p: string]: TrackSimilarities;
-}
-
-export interface TrackSimilarities {
-  id: string;
-  type: DatumType;
-  relationships: TrackSimilarities_Relationships;
-}
-
-export interface TrackSimilarities_Relationships {
-  tracks: Tracks;
-}
-
-export interface Tracks {
-  data: Datum[];
+export interface ShazamSongs {
+  [p: string]: ShazamSong;
 }
 
 export interface ShazamSong {
   id: string;
-  type: DatumType;
-  attributes: ShazamSongAttributes;
-  relationships: ShazamSongRelationships;
+  type: string;
+  attributes: ShazamSong_Attributes;
+  relationships: Relationships;
 }
 
-export interface ShazamSongAttributes {
-  type: AttributesType;
+export interface ShazamSong_Attributes {
+  type: string;
   title: string;
   artist: string;
   primaryArtist: string;
@@ -160,63 +152,58 @@ export interface Streaming {
   store: string;
 }
 
-export enum AttributesType {
-  Music = 'MUSIC',
+export interface Relationships {
+  'artist-highlights': ArtistHighlightsClass;
+  'track-highlights': ArtistHighlightsClass;
+  'related-tracks': ArtistHighlightsClass;
+  songs: ArtistHighlightsClass;
+  albums: ArtistHighlightsClass;
+  'shazam-artists': ArtistHighlightsClass;
+  artists: ArtistHighlightsClass;
+  lyrics: ArtistHighlightsClass;
 }
 
-export interface ShazamSongRelationships {
-  'artist-highlights': Tracks;
-  'related-tracks': Tracks;
-  songs: Tracks;
-  albums: Tracks;
-  'shazam-artists': Tracks;
-  artists: Tracks;
-  lyrics?: Tracks;
-  'track-highlights'?: Tracks;
+export interface ArtistHighlightsClass {
+  data: Datum[];
+}
+
+export interface Songs {
+  [p: string]: Song;
 }
 
 export interface Song {
   id: string;
-  type: DatumType;
-  attributes: SongAttributes;
+  type: string;
+  attributes: Song_Attributes;
 }
 
-export interface SongAttributes {
+export interface Song_Attributes {
   hasLyrics: boolean;
   hasTimeSyncedLyrics: boolean;
   unitags: Unitag[];
 }
 
 export interface Unitag {
-  namespace: Namespace;
+  namespace: string;
   tag: string;
   score: number;
 }
 
-export enum Namespace {
-  EditorialEra = 'EditorialEra',
-  EditorialGenres = 'EditorialGenres',
-  EditorialMoodsAndActivities = 'EditorialMoodsAndActivities',
-  MemoryAppropriateness = 'MemoryAppropriateness',
+export interface TrackHighlights {
+  [p: string]: Datum;
 }
 
 // Converts JSON strings to/from your types
 // and asserts the results of JSON.parse at runtime
 export class Convert {
-  public static toShazamSongsListSimilarities(
-    json: string,
-  ): ShazamSongsListSimilarities {
-    return cast(JSON.parse(json), r('ShazamSongsListSimilarities'));
+  public static toShazamSongsGetDetails(json: string): ShazamSongsGetDetails {
+    return cast(JSON.parse(json), r('ShazamSongsGetDetails'));
   }
 
-  public static shazamSongsListSimilaritiesToJson(
-    value: ShazamSongsListSimilarities,
+  public static shazamSongsGetDetailsToJson(
+    value: ShazamSongsGetDetails,
   ): string {
-    return JSON.stringify(
-      uncast(value, r('ShazamSongsListSimilarities')),
-      null,
-      2,
-    );
+    return JSON.stringify(uncast(value, r('ShazamSongsGetDetails')), null, 2);
   }
 }
 
@@ -401,7 +388,7 @@ function r(name: string) {
 }
 
 const typeMap: any = {
-  ShazamSongsListSimilarities: o(
+  ShazamSongsGetDetails: o(
     [
       { json: 'data', js: 'data', typ: a(r('Datum')) },
       { json: 'resources', js: 'resources', typ: r('Resources') },
@@ -411,42 +398,49 @@ const typeMap: any = {
   Datum: o(
     [
       { json: 'id', js: 'id', typ: '' },
-      { json: 'type', js: 'type', typ: r('DatumType') },
+      { json: 'type', js: 'type', typ: '' },
     ],
     false,
   ),
   Resources: o(
     [
       {
-        json: 'shazam-song-lists',
-        js: 'shazam-song-lists',
-        typ: r('ShazamSongLists'),
-      },
-      { json: 'track-highlights', js: 'track-highlights', typ: m(r('Datum')) },
-      { json: 'songs', js: 'songs', typ: m(r('Song')) },
-      { json: 'shazam-artists', js: 'shazam-artists', typ: r('ShazamArtists') },
-      {
         json: 'artist-highlights',
         js: 'artist-highlights',
-        typ: m(r('Datum')),
+        typ: r('ArtistHighlights'),
       },
-      { json: 'lyrics', js: 'lyrics', typ: m(r('Lyric')) },
-      { json: 'related-tracks', js: 'related-tracks', typ: m(r('Datum')) },
-      { json: 'albums', js: 'albums', typ: m(r('Album')) },
-      { json: 'artists', js: 'artists', typ: m(r('Artist')) },
-      { json: 'shazam-songs', js: 'shazam-songs', typ: m(r('ShazamSong')) },
+      {
+        json: 'track-highlights',
+        js: 'track-highlights',
+        typ: r('TrackHighlights'),
+      },
+      { json: 'related-tracks', js: 'related-tracks', typ: r('RelatedTracks') },
+      { json: 'songs', js: 'songs', typ: r('Songs') },
+      { json: 'albums', js: 'albums', typ: r('ResourcesAlbums') },
+      { json: 'shazam-artists', js: 'shazam-artists', typ: r('ShazamArtists') },
+      { json: 'artists', js: 'artists', typ: r('Artists') },
+      { json: 'lyrics', js: 'lyrics', typ: r('Lyrics') },
+      { json: 'shazam-songs', js: 'shazam-songs', typ: r('ShazamSongs') },
     ],
     false,
   ),
-  Album: o(
+  ResourcesAlbums: o(
+    [{ json: '1792077173', js: '1792077173', typ: r('The1792077173') }],
+    false,
+  ),
+  The1792077173: o(
     [
       { json: 'id', js: 'id', typ: '' },
-      { json: 'type', js: 'type', typ: r('DatumType') },
-      { json: 'attributes', js: 'attributes', typ: r('AlbumAttributes') },
+      { json: 'type', js: 'type', typ: '' },
+      {
+        json: 'attributes',
+        js: 'attributes',
+        typ: r('The1792077173_Attributes'),
+      },
     ],
     false,
   ),
-  AlbumAttributes: o(
+  The1792077173_Attributes: o(
     [
       { json: 'artistName', js: 'artistName', typ: '' },
       { json: 'name', js: 'name', typ: '' },
@@ -454,77 +448,84 @@ const typeMap: any = {
     ],
     false,
   ),
-  Artist: o(
+  ArtistHighlights: o(
+    [{ json: '425470694', js: '425470694', typ: r('Datum') }],
+    false,
+  ),
+  Artists: o(
+    [{ json: '425470694', js: '425470694', typ: r('The425470694') }],
+    false,
+  ),
+  The425470694: o(
     [
       { json: 'id', js: 'id', typ: '' },
-      { json: 'attributes', js: 'attributes', typ: r('ArtistAttributes') },
-      { json: 'type', js: 'type', typ: r('DatumType') },
+      {
+        json: 'attributes',
+        js: 'attributes',
+        typ: r('The425470694_Attributes'),
+      },
+      { json: 'type', js: 'type', typ: '' },
     ],
     false,
   ),
-  ArtistAttributes: o([{ json: 'name', js: 'name', typ: '' }], false),
-  Lyric: o(
+  The425470694_Attributes: o([{ json: 'name', js: 'name', typ: '' }], false),
+  Lyrics: o(
+    [{ json: '37075224', js: '37075224', typ: r('The37075224') }],
+    false,
+  ),
+  The37075224: o(
     [
       { json: 'id', js: 'id', typ: '' },
-      { json: 'type', js: 'type', typ: r('DatumType') },
-      { json: 'attributes', js: 'attributes', typ: r('LyricAttributes') },
+      { json: 'type', js: 'type', typ: '' },
+      {
+        json: 'attributes',
+        js: 'attributes',
+        typ: r('The37075224_Attributes'),
+      },
     ],
     false,
   ),
-  LyricAttributes: o(
+  The37075224_Attributes: o(
     [
       { json: 'text', js: 'text', typ: a('') },
       { json: 'footer', js: 'footer', typ: '' },
       { json: 'musixmatchLyricsId', js: 'musixmatchLyricsId', typ: '' },
-      { json: 'providerName', js: 'providerName', typ: r('ProviderName') },
+      { json: 'providerName', js: 'providerName', typ: '' },
       { json: 'syncAvailable', js: 'syncAvailable', typ: true },
     ],
     false,
   ),
-  ShazamArtists: o([{ json: '42', js: '42', typ: r('Datum') }], false),
-  ShazamSongLists: o(
+  RelatedTracks: o(
     [
       {
         json: 'track-similarities-id-811314261',
         js: 'track-similarities-id-811314261',
-        typ: r('TrackSimilaritiesID811314261'),
+        typ: r('Datum'),
       },
     ],
     false,
   ),
-  TrackSimilaritiesID811314261: o(
+  ShazamArtists: o([{ json: '42', js: '42', typ: r('Datum') }], false),
+  ShazamSongs: o(
+    [{ json: '811314261', js: '811314261', typ: r('The811314261') }],
+    false,
+  ),
+  The811314261: o(
     [
       { json: 'id', js: 'id', typ: '' },
-      { json: 'type', js: 'type', typ: r('DatumType') },
+      { json: 'type', js: 'type', typ: '' },
       {
-        json: 'relationships',
-        js: 'relationships',
-        typ: r('TrackSimilaritiesID811314261_Relationships'),
+        json: 'attributes',
+        js: 'attributes',
+        typ: r('The811314261_Attributes'),
       },
+      { json: 'relationships', js: 'relationships', typ: r('Relationships') },
     ],
     false,
   ),
-  TrackSimilaritiesID811314261_Relationships: o(
-    [{ json: 'tracks', js: 'tracks', typ: r('Tracks') }],
-    false,
-  ),
-  Tracks: o([{ json: 'data', js: 'data', typ: a(r('Datum')) }], false),
-  ShazamSong: o(
+  The811314261_Attributes: o(
     [
-      { json: 'id', js: 'id', typ: '' },
-      { json: 'type', js: 'type', typ: r('DatumType') },
-      { json: 'attributes', js: 'attributes', typ: r('ShazamSongAttributes') },
-      {
-        json: 'relationships',
-        js: 'relationships',
-        typ: r('ShazamSongRelationships'),
-      },
-    ],
-    false,
-  ),
-  ShazamSongAttributes: o(
-    [
-      { json: 'type', js: 'type', typ: r('AttributesType') },
+      { json: 'type', js: 'type', typ: '' },
       { json: 'title', js: 'title', typ: '' },
       { json: 'artist', js: 'artist', typ: '' },
       { json: 'primaryArtist', js: 'primaryArtist', typ: '' },
@@ -580,32 +581,56 @@ const typeMap: any = {
     ],
     false,
   ),
-  ShazamSongRelationships: o(
+  Relationships: o(
     [
-      { json: 'artist-highlights', js: 'artist-highlights', typ: r('Tracks') },
-      { json: 'related-tracks', js: 'related-tracks', typ: r('Tracks') },
-      { json: 'songs', js: 'songs', typ: r('Tracks') },
-      { json: 'albums', js: 'albums', typ: r('Tracks') },
-      { json: 'shazam-artists', js: 'shazam-artists', typ: r('Tracks') },
-      { json: 'artists', js: 'artists', typ: r('Tracks') },
-      { json: 'lyrics', js: 'lyrics', typ: u(undefined, r('Tracks')) },
+      {
+        json: 'artist-highlights',
+        js: 'artist-highlights',
+        typ: r('ArtistHighlightsClass'),
+      },
       {
         json: 'track-highlights',
         js: 'track-highlights',
-        typ: u(undefined, r('Tracks')),
+        typ: r('ArtistHighlightsClass'),
+      },
+      {
+        json: 'related-tracks',
+        js: 'related-tracks',
+        typ: r('ArtistHighlightsClass'),
+      },
+      { json: 'songs', js: 'songs', typ: r('ArtistHighlightsClass') },
+      { json: 'albums', js: 'albums', typ: r('ArtistHighlightsClass') },
+      {
+        json: 'shazam-artists',
+        js: 'shazam-artists',
+        typ: r('ArtistHighlightsClass'),
+      },
+      { json: 'artists', js: 'artists', typ: r('ArtistHighlightsClass') },
+      { json: 'lyrics', js: 'lyrics', typ: r('ArtistHighlightsClass') },
+    ],
+    false,
+  ),
+  ArtistHighlightsClass: o(
+    [{ json: 'data', js: 'data', typ: a(r('Datum')) }],
+    false,
+  ),
+  Songs: o(
+    [{ json: '1792077176', js: '1792077176', typ: r('The1792077176') }],
+    false,
+  ),
+  The1792077176: o(
+    [
+      { json: 'id', js: 'id', typ: '' },
+      { json: 'type', js: 'type', typ: '' },
+      {
+        json: 'attributes',
+        js: 'attributes',
+        typ: r('The1792077176_Attributes'),
       },
     ],
     false,
   ),
-  Song: o(
-    [
-      { json: 'id', js: 'id', typ: '' },
-      { json: 'type', js: 'type', typ: r('DatumType') },
-      { json: 'attributes', js: 'attributes', typ: r('SongAttributes') },
-    ],
-    false,
-  ),
-  SongAttributes: o(
+  The1792077176_Attributes: o(
     [
       { json: 'hasLyrics', js: 'hasLyrics', typ: true },
       { json: 'hasTimeSyncedLyrics', js: 'hasTimeSyncedLyrics', typ: true },
@@ -615,30 +640,14 @@ const typeMap: any = {
   ),
   Unitag: o(
     [
-      { json: 'namespace', js: 'namespace', typ: r('Namespace') },
+      { json: 'namespace', js: 'namespace', typ: '' },
       { json: 'tag', js: 'tag', typ: '' },
       { json: 'score', js: 'score', typ: 3.14 },
     ],
     false,
   ),
-  DatumType: [
-    'albums',
-    'artist-highlights',
-    'artists',
-    'lyrics',
-    'related-tracks',
-    'shazam-artists',
-    'shazam-song-lists',
-    'shazam-songs',
-    'songs',
-    'track-highlights',
-  ],
-  ProviderName: ['musixmatch'],
-  AttributesType: ['MUSIC'],
-  Namespace: [
-    'EditorialEra',
-    'EditorialGenres',
-    'EditorialMoodsAndActivities',
-    'MemoryAppropriateness',
-  ],
+  TrackHighlights: o(
+    [{ json: '1792580847', js: '1792580847', typ: r('Datum') }],
+    false,
+  ),
 };

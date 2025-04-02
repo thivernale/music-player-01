@@ -65,7 +65,7 @@ const TopPlay = () => {
   const dispatch = useAppDispatch();
   const { activeSong, isPlaying } = useAppSelector(({ player }) => player);
   const handlePlayPause = (song: ShazamSong, i: number) => {
-    dispatch(setActiveSong({ song, data, i }));
+    dispatch(setActiveSong({ song, data: data || [], i }));
     dispatch(playPause(!isPlaying));
   };
   const divRef = useRef<HTMLDivElement>(null);
@@ -121,21 +121,37 @@ const TopPlay = () => {
           modules={[FreeMode]}
           className="mt-4"
         >
-          {topPlays?.map((song) => (
-            <SwiperSlide
-              key={song.id}
-              style={{ width: '25%', height: 'auto' }}
-              className="animate-slideright rounded-full shadow-lg"
-            >
-              <Link to={`/artists/${song.relationships.artists.data[0].id}`}>
-                <img
-                  alt="name"
-                  src={song.attributes.images?.artistAvatar}
-                  className="w-full rounded-full object-cover"
-                />
-              </Link>
-            </SwiperSlide>
-          ))}
+          {data
+            ?.reduce((songsUniquePerArtist, current) => {
+              if (current.relationships.artists.data[0].id) {
+                const artistId = current.relationships.artists.data[0].id;
+                if (
+                  !songsUniquePerArtist.some(
+                    (song) =>
+                      song.relationships.artists.data[0].id === artistId,
+                  )
+                ) {
+                  songsUniquePerArtist.push(current);
+                }
+              }
+              return songsUniquePerArtist;
+            }, [] as ShazamSong[])
+            .map((song) => (
+              <SwiperSlide
+                key={song.id}
+                style={{ width: '25%', height: 'auto' }}
+                className="animate-slideright rounded-full shadow-lg"
+              >
+                <Link to={`/artists/${song.relationships.artists.data[0].id}`}>
+                  <img
+                    alt={song.attributes.artist}
+                    title={song.attributes.artist}
+                    src={song.attributes.images?.artistAvatar}
+                    className="w-full rounded-full object-cover"
+                  />
+                </Link>
+              </SwiperSlide>
+            ))}
         </Swiper>
       </div>
     </div>
