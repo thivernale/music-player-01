@@ -2,7 +2,11 @@ import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 import 'swiper/css';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 import 'swiper/css/free-mode';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { playPause, setActiveSong } from '../redux/features/playerSlice';
@@ -73,7 +77,8 @@ const TopPlay = () => {
   const topPlays = data?.slice(0, 5);
 
   useEffect(() => {
-    divRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (!divRef.current) return;
+    divRef.current.scrollIntoView({ behavior: 'smooth' });
   });
 
   return (

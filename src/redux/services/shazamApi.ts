@@ -73,43 +73,6 @@ export const shazamApi = createApi({
         url: '/artists/get-top-songs',
         params: { id },
       }),
-      /*transformResponse: (response: ArtistsTopSongs, meta, arg) =>
-        Object.values(
-          response.data.map(
-            (d) =>
-              ({
-                id: d.id + 'not-shazam-song-id',
-                type: DatumType.ShazamSongs,
-                attributes: {
-                  ...d.attributes,
-                  type: 'MUSIC',
-                  genres: { primary: d.attributes.genreNames[0] } as Genres,
-                  title: d.attributes.name,
-                  artist: d.attributes.artistName,
-                  primaryArtist: d.attributes.artistName,
-                  label: '',
-                  explicit: false,
-                  webUrl: d.attributes.url,
-                  images: {
-                    coverArt: d.attributes.artwork.url.replace(
-                      /\{[wh]\}/g,
-                      '400',
-                    ),
-                    artistAvatar: '',
-                  } as Images,
-                  share: {} as Share,
-                  streaming: {
-                    preview: d.attributes.previews[0].url,
-                  } as Streaming,
-                  classicalAvailability: false,
-                } as ShazamSongAttributes,
-                relationships: {
-                  artists: { data: [{ id: arg, type: DatumType.Artists }] },
-                  songs: { data: [{ id: d.id, type: DatumType.Songs }] },
-                } as unknown as ShazamSongRelationships,
-              }) as ShazamSong,
-          ),
-        ),*/
     }),
   }),
 });

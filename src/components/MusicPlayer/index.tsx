@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { FormEvent, SyntheticEvent, useEffect, useState } from 'react';
 
 import {
   nextSong,
@@ -25,7 +25,7 @@ const MusicPlayer = () => {
 
   useEffect(() => {
     if (currentSongs.length) dispatch(playPause(true));
-  }, [currentIndex]);
+  }, [currentIndex, currentSongs.length, dispatch]);
 
   const handlePlayPause = () => {
     if (!isActive) return;
@@ -81,7 +81,11 @@ const MusicPlayer = () => {
           value={appTime}
           min={0}
           max={duration}
-          onInput={(event) => setSeekTime(event.target.value)}
+          onInput={(
+            event: FormEvent<HTMLInputElement> & {
+              target: { value: number };
+            },
+          ) => setSeekTime(event.target.value)}
           setSeekTime={setSeekTime}
           appTime={appTime}
         />
@@ -93,8 +97,16 @@ const MusicPlayer = () => {
           repeat={repeat}
           currentIndex={currentIndex}
           onEnded={handleNextSong}
-          onTimeUpdate={(event) => setAppTime(event.target.currentTime)}
-          onLoadedData={(event) => setDuration(event.target.duration)}
+          onTimeUpdate={(
+            event: SyntheticEvent<HTMLAudioElement, Event> & {
+              target: { currentTime: number };
+            },
+          ) => setAppTime(event.target.currentTime)}
+          onLoadedData={(
+            event: SyntheticEvent<HTMLAudioElement, Event> & {
+              target: { duration: number };
+            },
+          ) => setDuration(event.target.duration)}
         />
       </div>
       <VolumeBar

@@ -24,7 +24,10 @@ const Discover = () => {
         </h2>
         <select
           value={''}
-          onChange={(e) => {}}
+          onChange={(e) => {
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+            e;
+          }}
           className="mt-5 rounded-lg bg-black p-3 text-sm text-gray-300 outline-none sm:mt-0"
         >
           {genres.map((genre) => (
