@@ -8,8 +8,6 @@ const Discover = () => {
   const seedShazamSongId = '811314261'; //1792077176
   const { data, isFetching, error } =
     useGetTrackSimilaritiesQuery(seedShazamSongId);
-  // const adamid = '425470694';
-  // const { data, isFetching, error } = useGetArtistTopSongsQuery(adamid);
   const { activeSong, isPlaying } = useAppSelector(({ player }) => player);
 
   if (isFetching) return <Loader title={'Loading songs...'} />;
