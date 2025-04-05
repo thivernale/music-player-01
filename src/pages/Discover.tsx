@@ -1,18 +1,24 @@
 import { Error, Loader, SongCard } from '../components';
 import { genres } from '../assets/constants';
-import { useAppSelector } from '../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { useGetTrackSimilaritiesQuery } from '../redux/services/shazamApi';
+import { selectGenreListId } from '../redux/features/playerSlice';
 
 const Discover = () => {
-  const genreTitle = 'Pop';
   const seedShazamSongId = '811314261'; //1792077176
   const { data, isFetching, error } =
     useGetTrackSimilaritiesQuery(seedShazamSongId);
-  const { activeSong, isPlaying } = useAppSelector(({ player }) => player);
+  const { activeSong, isPlaying, genreListId } = useAppSelector(
+    ({ player }) => player,
+  );
+  const dispatch = useAppDispatch();
 
   if (isFetching) return <Loader title={'Loading songs...'} />;
 
   if (error) return <Error />;
+
+  const genreTitle =
+    genres.find(({ value }) => value === genreListId)?.title || 'Pop';
 
   return (
     <div className="flex flex-col">
@@ -21,11 +27,8 @@ const Discover = () => {
           Discover {genreTitle}
         </h2>
         <select
-          value={''}
-          onChange={(e) => {
-            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-            e;
-          }}
+          value={genreListId || ''}
+          onChange={(e) => dispatch(selectGenreListId(e.currentTarget.value))}
           className="mt-5 rounded-lg bg-black p-3 text-sm text-gray-300 outline-none sm:mt-0"
         >
           {genres.map((genre) => (
