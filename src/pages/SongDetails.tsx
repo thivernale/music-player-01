@@ -21,8 +21,13 @@ const SongDetails = () => {
     error,
   } = useGetTrackSimilaritiesQuery(songid as string);
 
+  const allData = [
+    songDetailsData?.['shazam-songs']?.[songid as string] as ShazamSong,
+    ...(data || []),
+  ];
+
   const handlePlayPause = (song: ShazamSong, i: number) => {
-    dispatch(setActiveSong({ song, data: data || [], i }));
+    dispatch(setActiveSong({ song, data: allData || [], i }));
     dispatch(playPause(!isPlaying));
   };
 
@@ -58,7 +63,7 @@ const SongDetails = () => {
       <RelatedSongs
         activeSong={activeSong}
         isPlaying={isPlaying}
-        data={data}
+        data={allData}
         handlePlay={handlePlayPause}
         handlePause={handlePlayPause}
       />
