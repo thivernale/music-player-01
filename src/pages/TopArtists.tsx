@@ -1,6 +1,6 @@
 import { ArtistCard, Error, Loader } from '../components';
 import { useGetTrackSimilaritiesQuery } from '../redux/services/shazamApi';
-import { ShazamSong } from '../types/shazamSongsListSimilarities';
+import { getUniqueArtistDetails } from '../utils/artistAdapters';
 
 const TopArtists = () => {
   const seedShazamSongId = '811314261';
@@ -22,21 +22,9 @@ const TopArtists = () => {
       </h2>
 
       <div className="flex flex-wrap justify-center gap-8 sm:justify-start">
-        {data
-          ?.reduce((songsUniquePerArtist, current) => {
-            if (current.relationships.artists.data[0].id) {
-              const artistId = current.relationships.artists.data[0].id;
-              if (
-                !songsUniquePerArtist.some(
-                  (song) => song.relationships.artists.data[0].id === artistId,
-                )
-              ) {
-                songsUniquePerArtist.push(current);
-              }
-            }
-            return songsUniquePerArtist;
-          }, [] as ShazamSong[])
-          .map((song) => <ArtistCard key={song.id} song={song} />)}
+        {getUniqueArtistDetails(data).map((artist) => (
+          <ArtistCard key={artist.id} {...artist} />
+        ))}
       </div>
     </div>
   );

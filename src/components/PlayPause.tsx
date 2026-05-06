@@ -1,12 +1,12 @@
-import { ShazamSong } from '../types/shazamSongsListSimilarities';
 import { FaPause, FaPlay } from 'react-icons/fa';
+import { NormalizedSong } from '../types/normalized';
 
 interface PlayPauseProps {
-  song?: ShazamSong;
+  song?: NormalizedSong;
   handlePlay?: () => void;
   handlePause?: () => void;
-  activeSong?: ShazamSong | undefined;
-  isPlaying?: boolean | undefined;
+  activeSong: NormalizedSong | undefined;
+  isPlaying: boolean | undefined;
 }
 
 const PlayPause = ({

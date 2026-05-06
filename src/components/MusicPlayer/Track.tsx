@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
-import { ShazamSong } from '../../types/shazamSongsListSimilarities';
+import { NormalizedSong } from '../../types/normalized';
 
 interface Props {
   isPlaying?: boolean;
   isActive?: boolean;
-  activeSong?: ShazamSong;
+  activeSong?: NormalizedSong;
 }
 
 const Track = ({ isPlaying, isActive, activeSong }: Props) => (
@@ -13,25 +13,35 @@ const Track = ({ isPlaying, isActive, activeSong }: Props) => (
       className={`${isPlaying && isActive ? 'animate-[spin_3s_linear_infinite]' : ''} mr-4 hidden h-16 w-16 sm:block`}
     >
       <img
-        src={activeSong?.attributes?.images?.coverArt}
+        src={activeSong?.coverArt}
         alt="cover art"
         className="rounded-full"
       />
     </div>
     <div className="w-[50%]">
       <p className="truncate text-lg font-bold text-white">
-        {activeSong?.attributes?.title ? (
-          <Link to={`/songs/${activeSong?.id}`}>
-            {activeSong?.attributes.title}
-          </Link>
+        {activeSong?.title ? (
+          activeSong.detailRoute ? (
+            <Link to={`${activeSong.detailRoute}/${activeSong.id}`}>
+              {activeSong.title}
+            </Link>
+          ) : (
+            activeSong.title
+          )
         ) : (
           'No active Song'
         )}
       </p>
       <p className="truncate text-gray-300">
-        {activeSong?.attributes?.artist ? (
-          <Link to={`/artists/${activeSong?.relationships.artists.data[0].id}`}>
-            {activeSong?.attributes.artist}
+        {activeSong?.artist ? (
+          <Link
+            to={
+              activeSong.artistId
+                ? `/artists/${activeSong.artistId}`
+                : `/search/${activeSong.artist}`
+            }
+          >
+            {activeSong.artist}
           </Link>
         ) : (
           'No active Song'

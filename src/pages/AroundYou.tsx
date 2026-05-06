@@ -1,20 +1,20 @@
 import { useEffect, useState } from 'react';
 import { useAppSelector } from '../redux/hooks';
 import { Error, Loader, SongCard } from '../components';
-import { type ShazamSong } from '../types/shazamSongsListSimilarities';
+import { NormalizedSong } from '../types/normalized';
 import { getCountryCode } from '../utils/geo';
 
 const AroundYou = () => {
   const [country, setCountry] = useState('');
   const [loading, setLoading] = useState(true);
   const { activeSong, isPlaying } = useAppSelector(({ player }) => player);
-  const data: ShazamSong[] = []; //TODO
+  const normalizedSongs: NormalizedSong[] = []; //TODO: fetch by country and normalize with normalizeShazamSong
 
   useEffect(() => {
     getCountryCode()
       .then((countryCode) => setCountry(countryCode))
       .finally(() => setLoading(false));
-  }, [country]);
+  }, []);
 
   if (loading) {
     return <Loader title="Loading songs around you..." />;
@@ -31,12 +31,12 @@ const AroundYou = () => {
       </h2>
 
       <div className="flex flex-wrap justify-center gap-8 sm:justify-start">
-        {data?.map((song, i) => (
+        {normalizedSongs.map((song, i) => (
           <SongCard
             key={song.id}
             song={song}
             i={i}
-            data={data}
+            data={normalizedSongs}
             activeSong={activeSong}
             isPlaying={isPlaying}
           />

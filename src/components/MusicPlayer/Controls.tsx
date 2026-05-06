@@ -6,14 +6,14 @@ import {
   BsShuffle,
 } from 'react-icons/bs';
 import * as React from 'react';
-import { ShazamSong } from '../../types/shazamSongsListSimilarities';
+import { NormalizedSong } from '../../types/normalized';
 
 interface Props {
   isPlaying?: boolean;
   isActive?: boolean;
   repeat?: boolean;
   shuffle?: boolean;
-  currentSongs: ShazamSong[];
+  currentSongs: NormalizedSong[];
   setRepeat: React.Dispatch<React.SetStateAction<boolean>>;
   setShuffle: React.Dispatch<React.SetStateAction<boolean>>;
   handlePlayPause: () => void;

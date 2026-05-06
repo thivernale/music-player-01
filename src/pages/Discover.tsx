@@ -3,6 +3,8 @@ import { genres } from '../assets/constants';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { useGetTrackSimilaritiesQuery } from '../redux/services/shazamApi';
 import { selectGenreListId } from '../redux/features/playerSlice';
+import { NormalizedSong } from '../types/normalized';
+import { normalizeShazamSong } from '../utils/songAdapters';
 
 const Discover = () => {
   const seedShazamSongId = '811314261'; //1792077176
@@ -19,6 +21,9 @@ const Discover = () => {
 
   const genreTitle =
     genres.find(({ value }) => value === genreListId)?.title || 'Pop';
+
+  const normalizedSongs: NormalizedSong[] =
+    data?.map(normalizeShazamSong) ?? [];
 
   return (
     <div className="flex flex-col">
@@ -39,12 +44,12 @@ const Discover = () => {
         </select>
       </div>
       <div className="flex flex-wrap justify-center gap-8 sm:justify-start">
-        {data?.map((song, i) => (
+        {normalizedSongs.map((song, i) => (
           <SongCard
             key={song.id}
             song={song}
             i={i}
-            data={data}
+            data={normalizedSongs}
             activeSong={activeSong}
             isPlaying={isPlaying}
           />
