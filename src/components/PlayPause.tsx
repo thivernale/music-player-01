@@ -16,7 +16,7 @@ const PlayPause = ({
   activeSong,
   isPlaying,
 }: PlayPauseProps) =>
-  isPlaying && activeSong!.id === song!.id ? (
+  isPlaying && activeSong?.id === song?.id ? (
     <FaPause size={35} className="text-gray-300" onClick={handlePause} />
   ) : (
     <FaPlay size={35} className="text-gray-300" onClick={handlePlay} />

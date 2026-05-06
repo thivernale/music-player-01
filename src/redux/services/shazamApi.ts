@@ -5,12 +5,15 @@ import {
   ShazamSongsListSimilarities,
 } from '../../types/shazamSongsListSimilarities';
 import { ArtistsTopSongs } from '../../types/artistsTopSongs';
-import { Search } from '../../types/search';
+import { Search2 } from '../../types/search2';
 import {
   Resources,
   ShazamSongsGetDetails,
 } from '../../types/shazamSongsGetDetails';
-import { SongAttributes, SongsGetDetails } from '../../types/songsGetDetails';
+import {
+  SongsGetDetails,
+  SongsGetDetailsDatum,
+} from '../../types/songsGetDetails';
 import {
   ArtistAttributes,
   ArtistsGetDetails,
@@ -29,9 +32,9 @@ export const shazamApi = createApi({
     },
   }),
   endpoints: (builder) => ({
-    search: builder.query<Search, string>({
+    search: builder.query<Search2, string>({
       query: (term) => ({
-        url: '/search',
+        url: '/v2/search',
         params: { term, offset: 0, limit: 5 },
       }),
     }),
@@ -51,13 +54,12 @@ export const shazamApi = createApi({
       transformResponse: (response: ShazamSongsListSimilarities) =>
         Object.values(response.resources['shazam-songs']),
     }),
-    getSongDetails: builder.query<SongAttributes, string>({
+    getSongDetails: builder.query<SongsGetDetailsDatum, string>({
       query: (id) => ({
         url: '/songs/v2/get-details',
         params: { id },
       }),
-      transformResponse: (response: SongsGetDetails) =>
-        response.data?.[0].attributes,
+      transformResponse: (response: SongsGetDetails) => response.data?.[0],
     }),
     getArtistDetails: builder.query<ArtistAttributes, string>({
       query: (id) => ({

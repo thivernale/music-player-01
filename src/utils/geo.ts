@@ -9,7 +9,7 @@ type ResponseType = { location: { country: string } };
 export async function getCountryCode() {
   try {
     const { data } = await axios.get<ResponseType>(`${GEO_API_URL}`);
-    return data.location.country as string;
+    return data.location.country;
   } catch (err: unknown) {
     console.log(err);
     return '';
