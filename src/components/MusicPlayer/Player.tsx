@@ -1,9 +1,8 @@
 import { ReactEventHandler, useEffect, useRef } from 'react';
-import { ShazamSongAttributes } from '../../types/shazamSongsListSimilarities';
+import { NormalizedSong } from '../../types/normalized';
 
 interface Props {
-  activeSong?: ShazamSongAttributes;
-  currentIndex?: number;
+  activeSong?: NormalizedSong;
   isPlaying: boolean;
   volume: number;
   seekTime: number;
@@ -26,24 +25,20 @@ const Player = ({
   const ref = useRef<HTMLAudioElement>(null);
 
   if (ref.current) {
-    if (isPlaying) {
-      ref.current.play();
-    } else {
-      ref.current.pause();
-    }
+    if (isPlaying) ref.current.play();
+    else ref.current.pause();
   }
 
   useEffect(() => {
     ref.current!.volume = volume;
   }, [volume]);
-  // updates audio element only on seekTime change (and not on each rerender):
   useEffect(() => {
     ref.current!.currentTime = seekTime;
   }, [seekTime]);
 
   return (
     <audio
-      src={activeSong?.streaming?.preview}
+      src={activeSong?.previewUrl}
       ref={ref}
       loop={repeat}
       onEnded={onEnded}

@@ -6,9 +6,9 @@ import {
   ArtistDetails,
   Discover,
   Search,
-  SongDetails,
   TopArtists,
   TopCharts,
+  TrackDetails,
 } from './pages';
 import { useAppSelector } from './redux/hooks';
 
@@ -29,7 +29,7 @@ const App = () => {
               <Route path="/top-charts" element={<TopCharts />} />
               <Route path="/around-you" element={<AroundYou />} />
               <Route path="/artists/:id" element={<ArtistDetails />} />
-              <Route path="/songs/:songid" element={<SongDetails />} />
+              <Route path="/tracks/:songid" element={<TrackDetails />} />
               <Route path="/search/:searchTerm" element={<Search />} />
             </Routes>
           </div>

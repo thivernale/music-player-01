@@ -90,12 +90,11 @@ const MusicPlayer = () => {
           appTime={appTime}
         />
         <Player
-          activeSong={activeSong.attributes}
+          activeSong={activeSong}
           volume={volume}
           isPlaying={isPlaying}
           seekTime={seekTime}
           repeat={repeat}
-          currentIndex={currentIndex}
           onEnded={handleNextSong}
           onTimeUpdate={(
             event: SyntheticEvent<HTMLAudioElement, Event> & {

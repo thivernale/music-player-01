@@ -7,16 +7,18 @@ import 'swiper/css/free-mode';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { playPause, setActiveSong } from '../redux/features/playerSlice';
 import { useGetTrackSimilaritiesQuery } from '../redux/services/shazamApi';
-import { ShazamSong } from '../types/shazamSongsListSimilarities';
 import PlayPause from './PlayPause';
+import { NormalizedSong } from '../types/normalized';
+import { normalizeShazamSong } from '../utils/songAdapters';
+import { getUniqueArtistDetails } from '../utils/artistAdapters';
 
 interface TopChartCardProps {
-  song: ShazamSong;
+  song: NormalizedSong;
   i: number;
-  activeSong: ShazamSong;
+  activeSong: NormalizedSong;
   isPlaying: boolean;
-  handlePlay: (song: ShazamSong, i: number) => void;
-  handlePause: (song: ShazamSong, i: number) => void;
+  handlePlay: (song: NormalizedSong, i: number) => void;
+  handlePause: (song: NormalizedSong, i: number) => void;
 }
 
 function TopChartCard({
@@ -32,18 +34,24 @@ function TopChartCard({
       <h3 className="mr-3 text-base font-bold text-white">{i + 1}.</h3>
       <div className="flex flex-1 flex-row items-center justify-between">
         <img
-          src={song.attributes.images?.coverArt}
-          alt={song.attributes.title}
+          src={song.coverArt}
+          alt={song.title}
           className="h-20 w-20 rounded-lg"
         />
         <div className="mx-3 flex flex-1 flex-col justify-center">
           <p className="truncate text-xl font-bold text-white">
-            <Link to={`/songs/${song?.id}`}>{song.attributes.title}</Link>
+            {song.detailRoute ? (
+              <Link to={`${song.detailRoute}/${song.id}`}>{song.title}</Link>
+            ) : (
+              song.title
+            )}
           </p>
           <p className="mt-1 truncate text-base text-gray-300">
-            <Link to={`/artists/${song?.relationships.artists.data[0].id}`}>
-              {song.attributes.artist}
-            </Link>
+            {song.artistId ? (
+              <Link to={`/artists/${song.artistId}`}>{song.artist}</Link>
+            ) : (
+              song.artist
+            )}
           </p>
         </div>
       </div>
@@ -64,13 +72,15 @@ const TopPlay = () => {
 
   const dispatch = useAppDispatch();
   const { activeSong, isPlaying } = useAppSelector(({ player }) => player);
-  const handlePlayPause = (song: ShazamSong, i: number) => {
-    dispatch(setActiveSong({ song, data: data || [], i }));
-    dispatch(playPause(!isPlaying));
-  };
   const divRef = useRef<HTMLDivElement>(null);
 
-  const topPlays = data?.slice(0, 5);
+  const normalizedSongs = data?.map(normalizeShazamSong) ?? [];
+  const topPlays = normalizedSongs.slice(0, 5);
+
+  const handlePlayPause = (song: NormalizedSong, i: number) => {
+    dispatch(setActiveSong({ song, data: normalizedSongs, i }));
+    dispatch(playPause(!isPlaying));
+  };
 
   useEffect(() => {
     if (!divRef.current) return;
@@ -85,13 +95,13 @@ const TopPlay = () => {
       <div className="flex w-full flex-col">
         <div className="flex flex-row items-center justify-between">
           <h2 className="text-2xl font-bold text-white">Top Charts</h2>
-          <Link to={'/top-charts'}>
+          <Link to="/top-charts">
             <p className="cursor-pointer text-base text-gray-300">See more</p>
           </Link>
         </div>
 
         <div className="mt-4 flex flex-col gap-1">
-          {topPlays?.map((song, i) => (
+          {topPlays.map((song, i) => (
             <TopChartCard
               key={song.id}
               song={song}
@@ -108,7 +118,7 @@ const TopPlay = () => {
       <div className="mt-8 flex w-full flex-col">
         <div className="flex flex-row items-center justify-between">
           <h2 className="text-2xl font-bold text-white">Top Artists</h2>
-          <Link to={'/top-artists'}>
+          <Link to="/top-artists">
             <p className="cursor-pointer text-base text-gray-300">See more</p>
           </Link>
         </div>
@@ -122,37 +132,22 @@ const TopPlay = () => {
           modules={[FreeMode]}
           className="mt-4"
         >
-          {data
-            ?.reduce((songsUniquePerArtist, current) => {
-              if (current.relationships.artists.data[0].id) {
-                const artistId = current.relationships.artists.data[0].id;
-                if (
-                  !songsUniquePerArtist.some(
-                    (song) =>
-                      song.relationships.artists.data[0].id === artistId,
-                  )
-                ) {
-                  songsUniquePerArtist.push(current);
-                }
-              }
-              return songsUniquePerArtist;
-            }, [] as ShazamSong[])
-            .map((song) => (
-              <SwiperSlide
-                key={song.id}
-                style={{ width: '25%', height: 'auto' }}
-                className="animate-slideright rounded-full shadow-lg"
-              >
-                <Link to={`/artists/${song.relationships.artists.data[0].id}`}>
-                  <img
-                    alt={song.attributes.artist}
-                    title={song.attributes.artist}
-                    src={song.attributes.images?.artistAvatar}
-                    className="w-full rounded-full object-cover"
-                  />
-                </Link>
-              </SwiperSlide>
-            ))}
+          {getUniqueArtistDetails(data).map((artist) => (
+            <SwiperSlide
+              key={artist.id}
+              style={{ width: '25%', height: 'auto' }}
+              className="animate-slideright rounded-full shadow-lg"
+            >
+              <Link to={`/artists/${artist.id}`}>
+                <img
+                  alt={artist.name}
+                  title={artist.name}
+                  src={artist.avatar}
+                  className="w-full rounded-full object-cover"
+                />
+              </Link>
+            </SwiperSlide>
+          ))}
         </Swiper>
       </div>
     </div>

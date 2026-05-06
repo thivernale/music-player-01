@@ -5,10 +5,12 @@ import {
   useGetTrackDetailsQuery,
   useGetTrackSimilaritiesQuery,
 } from '../redux/services/shazamApi';
-import { ShazamSong } from '../types/shazamSongsListSimilarities';
 import { playPause, setActiveSong } from '../redux/features/playerSlice';
+import { NormalizedSong } from '../types/normalized';
+import { normalizeShazamSong } from '../utils/songAdapters';
+import { ShazamSong } from '../types/shazamSongsListSimilarities';
 
-const SongDetails = () => {
+const TrackDetails = () => {
   const { songid } = useParams<{ songid: string }>();
 
   const dispatch = useAppDispatch();
@@ -16,23 +18,24 @@ const SongDetails = () => {
   const { data: songDetailsData, isFetching: isFetchingSongDetails } =
     useGetTrackDetailsQuery(songid as string);
   const {
-    data,
+    data: similarData,
     isFetching: isFetchingRelatedSongs,
     error,
   } = useGetTrackSimilaritiesQuery(songid as string);
 
-  const allData = [
-    songDetailsData?.['shazam-songs']?.[songid as string] as ShazamSong,
-    ...(data || []),
+  const mainSong = songDetailsData?.['shazam-songs']?.[songid as string];
+  const allData: NormalizedSong[] = [
+    ...(mainSong ? [normalizeShazamSong(mainSong as ShazamSong)] : []),
+    ...(similarData?.map(normalizeShazamSong) ?? []),
   ];
 
-  const handlePlayPause = (song: ShazamSong, i: number) => {
-    dispatch(setActiveSong({ song, data: allData || [], i }));
+  const handlePlayPause = (song: NormalizedSong, i: number) => {
+    dispatch(setActiveSong({ song, data: allData, i }));
     dispatch(playPause(!isPlaying));
   };
 
   if (isFetchingRelatedSongs || isFetchingSongDetails) {
-    return <Loader title="Loading song details..." />;
+    return <Loader title="Loading track details..." />;
   }
 
   if (error) {
@@ -44,7 +47,6 @@ const SongDetails = () => {
       <DetailsHeader songId={songid} songData={songDetailsData} />
       <div className="mb-10">
         <h2 className="text-3xl font-bold text-white">Lyrics:</h2>
-
         <div className="mt-5 text-base text-gray-400">
           {songDetailsData?.lyrics ? (
             Object.values(songDetailsData.lyrics)
@@ -71,4 +73,4 @@ const SongDetails = () => {
   );
 };
 
-export default SongDetails;
+export default TrackDetails;
