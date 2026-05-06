@@ -19,27 +19,27 @@ export interface ArtistSong {
 }
 
 export interface ArtistSongAttributes {
-  hasTimeSyncedLyrics: boolean;
   albumName: string;
-  genreNames: GenreName[];
-  trackNumber: number;
-  releaseDate: Date;
-  durationInMillis: number;
-  isVocalAttenuationAllowed: boolean;
-  isMasteredForItunes: boolean;
-  isrc: string;
-  artwork: Artwork;
-  composerName: string;
-  audioLocale: string;
-  url: string;
-  playParams: PlayParams;
-  discNumber: number;
-  hasLyrics: boolean;
-  isAppleDigitalMaster: boolean;
-  audioTraits: AudioTrait[];
-  name: string;
-  previews: Preview[];
   artistName: string;
+  artwork: Artwork;
+  audioLocale: string;
+  audioTraits: AudioTrait[];
+  composerName: string;
+  discNumber: number;
+  durationInMillis: number;
+  genreNames: GenreName[];
+  hasLyrics: boolean;
+  hasTimeSyncedLyrics: boolean;
+  isAppleDigitalMaster: boolean;
+  isMasteredForItunes: boolean;
+  isVocalAttenuationAllowed: boolean;
+  isrc: string;
+  name: string;
+  playParams: PlayParams;
+  previews: Preview[];
+  releaseDate: Date;
+  trackNumber: number;
+  url: string;
 }
 
 export interface Artwork {

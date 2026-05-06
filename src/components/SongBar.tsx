@@ -87,8 +87,8 @@ const SongBar = ({
           isPlaying={isPlaying}
           activeSong={activeSong}
           song={song}
-          handlePause={() => handlePause && handlePause(song, i)}
-          handlePlay={() => handlePlay && handlePlay(song, i)}
+          handlePause={() => handlePause?.(song, i)}
+          handlePlay={() => handlePlay?.(song, i)}
         />
       </>
     )}

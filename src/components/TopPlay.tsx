@@ -2,11 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 import 'swiper/css';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 import 'swiper/css/free-mode';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { playPause, setActiveSong } from '../redux/features/playerSlice';
@@ -30,7 +26,7 @@ function TopChartCard({
   isPlaying,
   handlePlay,
   handlePause,
-}: TopChartCardProps) {
+}: Readonly<TopChartCardProps>) {
   return (
     <div className="mb-2 flex w-full cursor-pointer flex-row items-center rounded-lg p-4 py-2 hover:bg-[#4c426e]">
       <h3 className="mr-3 text-base font-bold text-white">{i + 1}.</h3>

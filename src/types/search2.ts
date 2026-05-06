@@ -1,58 +1,123 @@
 // To parse this data:
 //
-//   import { Convert, SongsGetDetails } from "./file";
+//   import { Convert, Search2 } from "./file";
 //
-//   const songsGetDetails = Convert.toSongsGetDetails(json);
+//   const search2 = Convert.toSearch2(json);
 //
 // These functions will throw an error if the JSON doesn't
 // match the expected interface, even if the JSON is valid.
 
-export interface SongsGetDetails {
-  data: SongsGetDetailsDatum[];
+export interface Search2 {
+  results: Search2Results;
+  meta: Search2Meta;
 }
 
-export interface SongsGetDetailsDatum {
+export interface Search2Meta {
+  results: MetaResults;
+  metrics: Metrics;
+}
+
+export interface Metrics {
+  dataSetId: string;
+}
+
+export interface MetaResults {
+  order: string[];
+  rawOrder: string[];
+}
+
+export interface Search2Results {
+  artists: Artists;
+  songs: Songs;
+}
+
+export interface Artists {
+  data: ArtistsDatum[];
+}
+
+export interface ArtistsDatum {
   id: string;
   type: string;
-  attributes: SongAttributes;
+  attributes: PurpleAttributes;
   relationships: Relationships;
-  meta: Meta;
 }
 
-export interface SongAttributes {
-  hasTimeSyncedLyrics: boolean;
-  albumName: string;
-  genreNames: string[];
-  trackNumber: number;
-  durationInMillis: number;
-  releaseDate: Date;
-  isVocalAttenuationAllowed: boolean;
-  isMasteredForItunes: boolean;
-  isrc: string;
+export interface PurpleAttributes {
   artwork: Artwork;
-  composerName: string;
-  audioLocale: string;
-  url: string;
-  playParams: PlayParams;
-  discNumber: number;
-  isAppleDigitalMaster: boolean;
-  hasLyrics: boolean;
-  audioTraits: string[];
+  genreNames: string[];
   name: string;
-  previews: Preview[];
-  artistName: string;
+  url: string;
 }
 
 export interface Artwork {
-  width: number;
-  url: string;
-  height: number;
-  textColor3: string;
-  textColor2: string;
-  textColor4: string;
-  textColor1: string;
   bgColor: string;
   hasP3: boolean;
+  height: number;
+  textColor1: string;
+  textColor2: string;
+  textColor3: string;
+  textColor4: string;
+  url: string;
+  width: number;
+}
+
+export interface Relationships {
+  albums: Albums;
+}
+
+export interface Albums {
+  data: AlbumsDatum[];
+}
+
+export interface AlbumsDatum {
+  id: string;
+  type: Type;
+}
+
+export enum Type {
+  Albums = 'albums',
+}
+
+export interface Songs {
+  data: ArtistSong[];
+}
+
+export interface ArtistSong {
+  id: string;
+  type: string;
+  attributes: ArtistSongAttributes;
+  meta?: DatumMeta;
+}
+
+export interface ArtistSongAttributes {
+  albumName: string;
+  artistName: string;
+  artwork: Artwork;
+  audioLocale: string;
+  audioTraits: AudioTrait[];
+  composerName: string;
+  contentRating?: string;
+  discNumber: number;
+  durationInMillis: number;
+  genreNames: string[];
+  hasLyrics: boolean;
+  hasTimeSyncedLyrics: boolean;
+  isAppleDigitalMaster: boolean;
+  isMasteredForItunes: boolean;
+  isVocalAttenuationAllowed: boolean;
+  isrc: string;
+  name: string;
+  playParams: PlayParams;
+  previews: Preview[];
+  releaseDate: Date;
+  trackNumber: number;
+  url: string;
+}
+
+export enum AudioTrait {
+  HiResLossless = 'hi-res-lossless',
+  Lossless = 'lossless',
+  LossyStereo = 'lossy-stereo',
 }
 
 export interface PlayParams {
@@ -64,47 +129,19 @@ export interface Preview {
   url: string;
 }
 
-export interface Meta {
-  contentVersion: ContentVersion;
-}
-
-export interface ContentVersion {
-  RTCI: number;
-  MZ_INDEXER: number;
-}
-
-export interface Relationships {
-  artists: Artists;
-  albums: Albums;
-}
-
-export interface Albums {
-  data: AlbumsDatum[];
-}
-
-export interface AlbumsDatum {
-  id: string;
-  type: 'albums';
-}
-
-export interface Artists {
-  data: ArtistsDatum[];
-}
-
-export interface ArtistsDatum {
-  id: string;
-  type: 'artists';
+export interface DatumMeta {
+  formerIds: string[];
 }
 
 // Converts JSON strings to/from your types
 // and asserts the results of JSON.parse at runtime
 export class Convert {
-  public static toSongsGetDetails(json: string): SongsGetDetails {
-    return cast(JSON.parse(json), r('SongsGetDetails'));
+  public static toSearch2(json: string): Search2 {
+    return cast(JSON.parse(json), r('Search2'));
   }
 
-  public static songsGetDetailsToJson(value: SongsGetDetails): string {
-    return JSON.stringify(uncast(value, r('SongsGetDetails')), null, 2);
+  public static search2ToJson(value: Search2): string {
+    return JSON.stringify(uncast(value, r('Search2')), null, 2);
   }
 }
 
@@ -272,78 +309,132 @@ function a(typ: any) {
   return { arrayItems: typ };
 }
 
-/*function u(...typs: any[]) {
+function u(...typs: any[]) {
   return { unionMembers: typs };
-}*/
+}
 
 function o(props: any[], additional: any) {
   return { props, additional };
 }
 
-/*function m(additional: any) {
+function m(additional: any) {
   return { props: [], additional };
-}*/
+}
 
 function r(name: string) {
   return { ref: name };
 }
 
 const typeMap: any = {
-  SongsGetDetails: o(
-    [{ json: 'data', js: 'data', typ: a(r('SongsGetDetailsDatum')) }],
-    false,
-  ),
-  SongsGetDetailsDatum: o(
+  Search2: o(
     [
-      { json: 'id', js: 'id', typ: '' },
-      { json: 'type', js: 'type', typ: '' },
-      { json: 'attributes', js: 'attributes', typ: r('Attributes') },
-      { json: 'relationships', js: 'relationships', typ: r('Relationships') },
-      { json: 'meta', js: 'meta', typ: r('Meta') },
+      { json: 'results', js: 'results', typ: r('Search2Results') },
+      { json: 'meta', js: 'meta', typ: r('Search2Meta') },
     ],
     false,
   ),
-  Attributes: o(
+  Search2Meta: o(
     [
-      { json: 'hasTimeSyncedLyrics', js: 'hasTimeSyncedLyrics', typ: true },
-      { json: 'albumName', js: 'albumName', typ: '' },
-      { json: 'genreNames', js: 'genreNames', typ: a('') },
-      { json: 'trackNumber', js: 'trackNumber', typ: 0 },
-      { json: 'durationInMillis', js: 'durationInMillis', typ: 0 },
-      { json: 'releaseDate', js: 'releaseDate', typ: Date },
-      {
-        json: 'isVocalAttenuationAllowed',
-        js: 'isVocalAttenuationAllowed',
-        typ: true,
-      },
-      { json: 'isMasteredForItunes', js: 'isMasteredForItunes', typ: true },
-      { json: 'isrc', js: 'isrc', typ: '' },
+      { json: 'results', js: 'results', typ: r('MetaResults') },
+      { json: 'metrics', js: 'metrics', typ: r('Metrics') },
+    ],
+    false,
+  ),
+  Metrics: o([{ json: 'dataSetId', js: 'dataSetId', typ: '' }], false),
+  MetaResults: o(
+    [
+      { json: 'order', js: 'order', typ: a('') },
+      { json: 'rawOrder', js: 'rawOrder', typ: a('') },
+    ],
+    false,
+  ),
+  Search2Results: o(
+    [
+      { json: 'artists', js: 'artists', typ: r('Artists') },
+      { json: 'songs', js: 'songs', typ: r('Songs') },
+    ],
+    false,
+  ),
+  Artists: o([{ json: 'data', js: 'data', typ: a(r('ArtistsDatum')) }], false),
+  ArtistsDatum: o(
+    [
+      { json: 'id', js: 'id', typ: '' },
+      { json: 'type', js: 'type', typ: '' },
+      { json: 'attributes', js: 'attributes', typ: r('PurpleAttributes') },
+      { json: 'relationships', js: 'relationships', typ: r('Relationships') },
+    ],
+    false,
+  ),
+  PurpleAttributes: o(
+    [
       { json: 'artwork', js: 'artwork', typ: r('Artwork') },
-      { json: 'composerName', js: 'composerName', typ: '' },
-      { json: 'audioLocale', js: 'audioLocale', typ: '' },
-      { json: 'url', js: 'url', typ: '' },
-      { json: 'playParams', js: 'playParams', typ: r('PlayParams') },
-      { json: 'discNumber', js: 'discNumber', typ: 0 },
-      { json: 'isAppleDigitalMaster', js: 'isAppleDigitalMaster', typ: true },
-      { json: 'hasLyrics', js: 'hasLyrics', typ: true },
-      { json: 'audioTraits', js: 'audioTraits', typ: a('') },
+      { json: 'genreNames', js: 'genreNames', typ: a('') },
       { json: 'name', js: 'name', typ: '' },
-      { json: 'previews', js: 'previews', typ: a(r('Preview')) },
-      { json: 'artistName', js: 'artistName', typ: '' },
+      { json: 'url', js: 'url', typ: '' },
     ],
     false,
   ),
   Artwork: o(
     [
-      { json: 'width', js: 'width', typ: 0 },
-      { json: 'url', js: 'url', typ: '' },
-      { json: 'height', js: 'height', typ: 0 },
-      { json: 'textColor3', js: 'textColor3', typ: '' },
-      { json: 'textColor2', js: 'textColor2', typ: '' },
-      { json: 'textColor4', js: 'textColor4', typ: '' },
-      { json: 'textColor1', js: 'textColor1', typ: '' },
       { json: 'bgColor', js: 'bgColor', typ: '' },
       { json: 'hasP3', js: 'hasP3', typ: true },
+      { json: 'height', js: 'height', typ: 0 },
+      { json: 'textColor1', js: 'textColor1', typ: '' },
+      { json: 'textColor2', js: 'textColor2', typ: '' },
+      { json: 'textColor3', js: 'textColor3', typ: '' },
+      { json: 'textColor4', js: 'textColor4', typ: '' },
+      { json: 'url', js: 'url', typ: '' },
+      { json: 'width', js: 'width', typ: 0 },
+    ],
+    false,
+  ),
+  Relationships: o([{ json: 'albums', js: 'albums', typ: r('Albums') }], false),
+  Albums: o([{ json: 'data', js: 'data', typ: a(r('AlbumsDatum')) }], false),
+  AlbumsDatum: o(
+    [
+      { json: 'id', js: 'id', typ: '' },
+      { json: 'type', js: 'type', typ: r('Type') },
+    ],
+    false,
+  ),
+  Songs: o([{ json: 'data', js: 'data', typ: a(r('SongsDatum')) }], false),
+  SongsDatum: o(
+    [
+      { json: 'id', js: 'id', typ: '' },
+      { json: 'type', js: 'type', typ: '' },
+      { json: 'attributes', js: 'attributes', typ: r('FluffyAttributes') },
+      { json: 'meta', js: 'meta', typ: u(undefined, r('DatumMeta')) },
+    ],
+    false,
+  ),
+  FluffyAttributes: o(
+    [
+      { json: 'albumName', js: 'albumName', typ: '' },
+      { json: 'artistName', js: 'artistName', typ: '' },
+      { json: 'artwork', js: 'artwork', typ: r('Artwork') },
+      { json: 'audioLocale', js: 'audioLocale', typ: '' },
+      { json: 'audioTraits', js: 'audioTraits', typ: a(r('AudioTrait')) },
+      { json: 'composerName', js: 'composerName', typ: '' },
+      { json: 'contentRating', js: 'contentRating', typ: u(undefined, '') },
+      { json: 'discNumber', js: 'discNumber', typ: 0 },
+      { json: 'durationInMillis', js: 'durationInMillis', typ: 0 },
+      { json: 'genreNames', js: 'genreNames', typ: a('') },
+      { json: 'hasLyrics', js: 'hasLyrics', typ: true },
+      { json: 'hasTimeSyncedLyrics', js: 'hasTimeSyncedLyrics', typ: true },
+      { json: 'isAppleDigitalMaster', js: 'isAppleDigitalMaster', typ: true },
+      { json: 'isMasteredForItunes', js: 'isMasteredForItunes', typ: true },
+      {
+        json: 'isVocalAttenuationAllowed',
+        js: 'isVocalAttenuationAllowed',
+        typ: true,
+      },
+      { json: 'isrc', js: 'isrc', typ: '' },
+      { json: 'name', js: 'name', typ: '' },
+      { json: 'playParams', js: 'playParams', typ: r('PlayParams') },
+      { json: 'previews', js: 'previews', typ: a(r('Preview')) },
+      { json: 'releaseDate', js: 'releaseDate', typ: Date },
+      { json: 'trackNumber', js: 'trackNumber', typ: 0 },
+      { json: 'url', js: 'url', typ: '' },
     ],
     false,
   ),
@@ -355,36 +446,7 @@ const typeMap: any = {
     false,
   ),
   Preview: o([{ json: 'url', js: 'url', typ: '' }], false),
-  Meta: o(
-    [
-      {
-        json: 'contentVersion',
-        js: 'contentVersion',
-        typ: r('ContentVersion'),
-      },
-    ],
-    false,
-  ),
-  ContentVersion: o(
-    [
-      { json: 'RTCI', js: 'RTCI', typ: 0 },
-      { json: 'MZ_INDEXER', js: 'MZ_INDEXER', typ: 0 },
-    ],
-    false,
-  ),
-  Relationships: o(
-    [
-      { json: 'artists', js: 'artists', typ: r('Albums') },
-      { json: 'albums', js: 'albums', typ: r('Albums') },
-    ],
-    false,
-  ),
-  Albums: o([{ json: 'data', js: 'data', typ: a(r('AlbumsDatum')) }], false),
-  AlbumsDatum: o(
-    [
-      { json: 'id', js: 'id', typ: '' },
-      { json: 'type', js: 'type', typ: '' },
-    ],
-    false,
-  ),
+  DatumMeta: o([{ json: 'formerIds', js: 'formerIds', typ: a('') }], false),
+  Type: ['albums'],
+  AudioTrait: ['hi-res-lossless', 'lossless', 'lossy-stereo'],
 };
