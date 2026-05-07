@@ -27,7 +27,7 @@ export interface ArtistSongAttributes {
   composerName: string;
   discNumber: number;
   durationInMillis: number;
-  genreNames: GenreName[];
+  genreNames: string[];
   hasLyrics: boolean;
   hasTimeSyncedLyrics: boolean;
   isAppleDigitalMaster: boolean;
@@ -60,19 +60,9 @@ export enum AudioTrait {
   LossyStereo = 'lossy-stereo',
 }
 
-export enum GenreName {
-  Metal = 'Metal',
-  Music = 'Music',
-  Rock = 'Rock',
-}
-
 export interface PlayParams {
   id: string;
-  kind: Kind;
-}
-
-export enum Kind {
-  Song = 'song',
+  kind: string;
 }
 
 export interface Preview {

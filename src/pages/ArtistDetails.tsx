@@ -7,7 +7,7 @@ import { DetailsHeader, Error, Loader, RelatedSongs } from '../components';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { playPause, setActiveSong } from '../redux/features/playerSlice';
 import { NormalizedSong } from '../types/normalized';
-import { normalizeAppleSong } from '../utils/songAdapters';
+import { normalizeArtistTopSong } from '../utils/songAdapters';
 
 const ArtistDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -32,7 +32,7 @@ const ArtistDetails = () => {
   if (error || errorSongs) return <Error />;
 
   const normalizedSongs: NormalizedSong[] =
-    songData?.data.map((s) => normalizeAppleSong(s, artistId)) ?? [];
+    songData?.data.map((s) => normalizeArtistTopSong(s, artistId)) ?? [];
 
   const handlePlayPause = (song: NormalizedSong, i: number) => {
     dispatch(setActiveSong({ song, data: normalizedSongs, i }));

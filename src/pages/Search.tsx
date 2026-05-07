@@ -5,7 +5,7 @@ import { useAppSelector } from '../redux/hooks';
 import { NormalizedSong } from '../types/normalized';
 import {
   formatAppleArtworkUrl,
-  normalizeAppleSong,
+  normalizeSearch2ArtistSong,
 } from '../utils/songAdapters';
 
 const Search = () => {
@@ -17,7 +17,9 @@ const Search = () => {
   if (error) return <Error />;
 
   const normalizedSongs: NormalizedSong[] =
-    data?.results?.songs?.data.map((item) => normalizeAppleSong(item)) ?? [];
+    data?.results?.songs?.data.map((item) =>
+      normalizeSearch2ArtistSong(item),
+    ) ?? [];
 
   return (
     <div className="flex flex-col gap-1">
